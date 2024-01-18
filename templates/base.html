@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ChatGPT</title>
+    {# include a stylesheet #}
+    {#
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
+
+    {# import local ttf font named "Monocraft.ttf" from static folder and directly inside of the fonts directory #}
+
+
+
+
+    {# import tailwind #}
+
+    {# import jquery #}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    {# import bootstrap #}
+
+    {# import awesome icons #}
+    <script src="https://kit.fontawesome.com/3af02524c9.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="flex flex-col w-full h-full">
+
+    <div class="flex flex-row justify-between h-[100vh] w-full bg-slate-800">
+        <div
+            class="app-sidebar-body relative flex flex-col h-full min-w-[20rem] max-w-[20rem] justify-evenly gap-8  items-center text-white font-semibold ">
+
+            {% include 'sidebar.html' %}
+        </div>
+
+        {% block content %}
+
+        {% endblock %}
+
+
+        <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+
+</html>

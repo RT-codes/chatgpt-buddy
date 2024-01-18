@@ -1,0 +1,182 @@
+<div id="roles-menu" class="relative flex flex-col gap-8 justify-center items-center w-full mt-8  ">
+
+    <div class="flex flex-row justify-evenly gap-8 items-center p-8 whitespace-nowrap rounded-sm w-full h-16">
+        <p>Create
+            "Role/Formula"</p>
+
+        <a href="/editformula"></q><button id="add_new_formula"><i class="fas fa-plus-circle ml-auto"></i></button></a>
+    </div>
+    <div id="local-menu-toggle" class="w-full">
+        <button id="local-toggle-div" class="flex flex-row justify-center items-center w-full p-8 h-[3rem]">
+            Load local
+        </button>
+    </div>
+    <div id="local-menu-container" class="local-toggle-off">
+        <div class="flex flex-row  justify-center items-center p-4 text-white rounded-md w-full">
+            <form id="upload-formula" action="/formulas/loadlocal" method="POST" enctype="multipart/form-data">
+                <input type="file" name="formulaFile" class="file-load-button w-full">
+                <input type="submit" value="Load" class="submit-file">
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div id="formulas-list" class="w-full p-4 ">
+    <ul
+        class="flex flex-col list-none w-full gap-2 min-h[2rem] max-h-[10rem] overflow-y-scroll overscroll-contain overflow-x-hidden">
+        {% if formulas | length != 0 %}
+        {% for formula in formulas %}
+        <li>
+            <a href="/editformula/{{ formula.id }}"
+                class="flex flex-row justify-start gap-8 items-center p-2 whitespace-nowrap rounded-sm w-full max-h-8 flex-nowrap"><button
+                    class="edit-formula"><i class="fas fa-flask ml-auto"></i></button>
+                <p class="text-sm h-4">{{ formula.title }}</p>
+            </a>
+            <div>
+                {# save icon #}
+                <button onclick="saveFormula(this.dataset.formulaId)" data-formula-id="{{ formula.id }}">
+                    <i class="fas fa-save"></i>
+                </button>
+            </div>
+            <div>
+                <button onclick="removeFormula(this.dataset.formulaId)" data-formula-id="{{ formula.id }}">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+        </li>
+        {% endfor %}
+        {% endif %}
+    </ul>
+</div>
+
+
+<div class="mb-[10rem] w-full h-auto flex flex-col gap-8 justify-center items-center relative">
+    <h3 class="conv-list-title font-sans font-extrabold text-2xl">CONVERSATIONS</h3>
+    <ul class="conv-items flex flex-col gap-4 w-full p-8">
+        {% for conversation in user.user_conversations %}
+        <li
+            class="flex flex-row items-center justify-between bg-slate-500 rounded-md  p-4 whitespace-nowrap max-h-8  transition-all ease-in-out duration-100 hover:translate-x-2 flex-nowrap">
+            <i class="fas fa-comments"></i>
+            <button class="go-to-conv w-full" data-conv-id="{{ conversation.id }}">
+                <p class=" font-sans text-sm font-thin ">{{ conversation.title }}</p>
+
+                {% set urlStart = "/conversation/" %}
+                {% set urlMiddle = conversation.id %}
+                {% set urlEnd = "/remove" %}
+                {% set removeUrl = urlStart ~ urlMiddle ~ urlEnd %}
+
+                <a href="{{ removeUrl }}"><button class="flex justify-center items-center delete-conv">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+
+<div class="dropdown relative flex flex-row w-full h-6 items-center justify-center p-8 bg-slate-600">
+
+    <p>Choose an option: </p>
+    <p id="selectedOption" class="m-4"></p>
+    <div class="dropdown-content ">
+        <button class="dropdown-option text-sm" onclick="handleClick('None')">None</button>
+        {% for formula in formulas %}
+        <button class="dropdown-option" onclick="handleClick('{{ formula.id }}')">{{ formula.title }}</button>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+<div class="new-conversation w-full h-auto flex flex-col justify-center items-center p-8">
+    <button id="start-new-conversation" class="flex p-8 rounded-md text-sm h-8 justify-center items-center">Start
+        Conversation
+    </button>
+
+</div>
+
+<script>
+
+    // when window is loaded
+    $(window).ready(function () {
+        const dropdown = document.querySelector(".dropdown");
+        const buttons = dropdown.querySelectorAll(".dropdown-option");
+        const selectedOption = dropdown.querySelector("#selectedOption");
+
+        console.log(dropdown);
+        console.log(buttons);
+        console.log(selectedOption);
+
+        dropdown.addEventListener("click", () => {
+            dropdown.classList.toggle("active");
+        });
+
+
+
+        buttons.forEach(button => {
+            button.addEventListener("click", () => {
+                selectedOption.innerText = button.innerText;
+            });
+        });
+
+        // add event listener to the local menu toggle so u can toggle the upload menu
+        var localMenuToggle = document.querySelector("#local-toggle-div");
+        localMenuToggle.addEventListener("mousedown", (e) => {
+            var localMenuContainer = document.querySelector("#local-menu-container");
+            //get element from event
+            var localMenuToggle = e.target;
+            localMenuToggle.classList.toggle("active-upload");
+            // toggle the class
+            localMenuContainer.classList.toggle("local-toggle-off");
+        });
+    });
+
+
+    function handleClick(option) {
+        // Do something with the selected option
+        console.log(option);
+
+    }
+
+    function removeFormula(formula_id) {
+        console.log(formula_id);
+        $.ajax({
+            url: "/formulas/removeformula/" + formula_id,
+            method: "POST",
+            success: function (response) {
+                console.log(response);
+                window.location.href = "/";
+            },
+        });
+    }
+
+    function saveFormula() {
+        fetch('/data')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }
+
+    function saveFormula(formula_id) {
+        console.log(formula_id);
+        $.ajax({
+            url: "/formulas/saveformula/" + formula_id,
+            method: "POST",
+            success: function (response) {
+                console.log(response);
+                window.location.href = "/";
+            },
+        });
+    }
+</script>
+
+
+
+{# user settings icon #}
+<i class="settings-icon fas fa-cog absolute top-8 right-8 text-2xl"></i>

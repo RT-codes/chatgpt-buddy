@@ -1,0 +1,51 @@
+{#
+<script>
+    // create an eventlistener for the form with id "chat-input-form"  and prevent default
+    document.getElementById("chat-input-form").addEventListener("submit", function (event) {
+        //if the value of the input field is empty, prevent the form from submitting
+        if (document.getElementById("message-input").value == "") {
+            event.preventDefault();
+        }
+
+        // if the value of the input field is not empty, send a POST request to the server
+        else {
+            var messageEl = document.getElementById("message-input");
+            var message = messageEl.value;
+            $.ajax({
+                type: "GET",
+                url: "/index",
+                data: {
+                    message: message
+                },
+
+                //success: function (response) {
+                //    var history = response;
+                //}
+            });
+        }
+    });
+
+</script> #}
+
+{#
+<script>
+    // stop the submit button with the "submit-button" ID from refreshing the page and instead send a POST request to the server
+    $("#submit-button").click(function (event) {
+        event.preventDefault();
+        var message = $("#message").val();
+        $.ajax({
+            type: "POST",
+            url: "/",
+            data: {
+                message: message
+            },
+            success: function (response) {
+                console.log(response);
+                $("#response-message").text(response);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+</script> #}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+{% if user.user_conversations | length > 0 %}
+<div
+    class="fixed  content-style w-full h-full flex flex-col-reverse gap-16 justify-end  items-end  text-white font-semibold overflow-y-hidden ">
+
+    <div id="conversation-container" {% for el in user.user_conversations %}{% if el.id==user.active_conversation
+        %}data-conv-id="{{ el.id }}" {% endif %}{% endfor %}
+        class="bg-image-container pl-[30%] flex flex-col justify-start overflow-y-scroll h-[100vh] w-full scrollbar-thumb-blue-500 overscroll-x-hidden scrollbar-track-blue-200">
+
+        <img class="conversation-container-background" src="../static/images/Abstract_data_background.png"></img>
+        <div
+            class="sticky-title sticky h-8 w-fit]  flex flex-row justify-center items-center p-8 rounded-md mt-8 ml-auto mr-auto">
+            <h1 class=" font-sans text-sm">
+                Title: {% for el in user.user_conversations %}{% if el.id == user.active_conversation %}{{
+                el.title }}{%
+                endif
+                %}{% endfor %}
+            </h1>
+        </div>
+
+        <div id="chat-input-container" class="app-input-fields mt-32 relative pl-[20%]">
+            {# onsubmit start function called chat-submitHandler #}
+            <div id="bouncer" class="bouncer  bouncer-hidden">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+
+
+            <form id="chat-input-form" method="POST" onsubmit="" class="relative">
+
+                <i id="submit-icon" class="fa-solid fa-paper-plane absolute "></i>
+                <input type="text" id="message-input" name="message" placeholder="Type your prompt here"
+                    onfocus="this.placeholder = ''" class=" text-stone-950 flex justify-start items-start">
+                {# make the button run a script #}
+                <input type="submit" id="submit-button" value="" class="relative content-glass from-neutral-400  ">
+            </form>
+        </div>
+    </div>
+
+</div>
+{% elif user.user_conversations | length == 0 %}
+<div class="relative content-style w-full max-h-[100vh] flex flex-col-reverse gap-16 justify-end items-center text-white
+font-semibold ">
+
+    <div id="conversation-container"
+        class="overflow-y-scroll h-full scrollbar-thumb-blue-500 scrollbar-track-blue-200 w-full p-8">
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

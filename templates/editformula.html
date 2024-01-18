@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+
+<div class="flex flex-col justify-center items-center w-full h-full overflow-y-scroll">
+    <div class="form-edit-container flex flex-col items-end w-full pt-[16rem]">
+
+        <img class="conversation-container-background z-0 " src="../static/images/Abstract_data_background.png"></img>
+        <form id="formula-form" method="POST" onsubmit=""
+            class="flex flex-col justify-center items-start w-[80%] gap-8 m-16  p-16 rounded-md z-10">
+            <div id="formula-id">{{ active_formula.id }}</div>
+
+            <label for="title">
+                <h3 class=" font-sans font-extrabold text-2xl capitalize">Title</h3>
+            </label>
+            {# <input type="text" name="title" id="title" value="{{ formula.title }}"> #}
+            <input type="text" name="title" id="title" value="{{ active_formula.title }}"
+                placeholder="Talk with a true pirate">
+            <label for="description">
+                <h3 class=" font-sans font-extrabold text-2xl capitalize">Description</h3>
+            </label>
+            {# <input type="text" name="description" id="description" value="{{ formula.description }}"> #}
+            <input type="text" name="description" id="description" value="{{ active_formula.description }}"
+                placeholder="example: This formula will make the bot into pirate personality">
+            <label for="formula">
+                <h3 class=" font-sans font-extrabold text-2xl capitalize">Formula </h3>
+            </label>
+            <div class="instruction-container">
+                <p class="font-serif">Here is a guideline on how to continue our conversation:
+
+                </p>
+            </div>
+
+            {# textarea instead #}
+            <textarea name="formula" id="formula"
+                class="w-full p-8 bg-transparent text-white">{{ active_formula.content }}</textarea>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+</div>
+
+<script>
+    //when page is ready
+
+
+
+    var form = document.getElementById("formula-form");
+    form.onsubmit = function (e) {
+        e.preventDefault();
+        editFormula();
+    };
+
+    function editFormula() {
+
+        var formEditContainer = document.querySelector(".form-edit-container");
+        var form = formEditContainer.querySelector("form");
+        var titleInput = form.querySelector("#title");
+        var descriptionInput = form.querySelector("#description");
+        var textarea = form.querySelector("#formula");
+        var id = form.querySelector("#formula-id").innerHTML;
+
+        //  make a json data object with the title, description and formula
+        var data = {
+            "formulaID": id,
+            "formulaTitle": titleInput.value,
+            "formulaDescription": descriptionInput.value,
+            "formula": textarea.value,
+        };
+
+        console.log("sending formdata to server");
+        console.log("data");
+        console.log(data);
+
+        // send a ajax request to the server to edit the formula
+        $.ajax({
+            url: "/formulas/editformula",
+            method: "POST",
+            data: data,
+            success: function (response) {
+                // convert the response json string to a javascript object
+                //console.log(responseObj);
+                console.log("response from server");
+                var responseObj = response;
+                console.log(responseObj);
+                //reload the page on root url
+                window.location.href = "/";
+            },
+        });
+    }
+
+</script>
+
+{% endblock %}
